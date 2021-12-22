@@ -61,16 +61,25 @@ fn day3_part2() {
     match read_file("03.txt") {
 		Ok(input) => {
             let v: Vec<&str> = input.trim().split('\n').collect();
-    // let input = vec!["00100","11110","10110","10111","10101","01111","00111",
-    //     "11100","10000","11001","00010","01010"];
-            let output: Vec<_> = v
-                .iter()
-                .filter(|x| x.chars().nth(0).unwrap().to_digit(10).unwrap() == 0)
-                .collect();
-            println!("{:?}", output);
-            println!("{}", type_of(output));
-            println!("{}", type_of(input));
+            let filtered_v: Vec<&str> = filter_by_char(v, '0');
+            println!("{:?}", filtered_v);
+
+            // let output: Vec<_> = v
+            //     .iter()
+            //     .filter(|x| x.chars().nth(0).unwrap() == '0')
+            //     .collect();
+            // println!("{:?}", output);
+            // println!("{}", type_of(output));
+            // println!("{}", type_of(input));
         }
         Err(e) => println!("{}", e),
 	}
+}
+
+fn filter_by_char(input: Vec<&str>, filter: char) -> Vec<&str> {
+    let output: Vec<&str> = input
+        .iter()
+        .filter(|x| x.chars().nth(0).unwrap() == filter)
+        .collect();
+    output
 }
