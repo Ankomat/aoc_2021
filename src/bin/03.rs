@@ -3,6 +3,7 @@ use std::fs::File;
 use std::path::Path;
 use std::io::{self, Read, BufRead};
 use std::any::type_name;
+// use std::math::round;
 // --------------------------------------------
 fn read_file<P>(filename: P) -> io::Result<String> where P: AsRef<Path>, {
     let mut buffer = String::new();
@@ -59,28 +60,64 @@ fn day3_part1() {
 }
 fn day3_part2() {
     if let Ok(input) = read_file("03.txt") {
-        let filter = ['0', '1', '0']; //[0, 12];
-        let mut v = input.trim().split('\n').collect();
-        for (i, x) in filter.iter().enumerate() {
-            println!("Filtering for {} on position {}:", x, i);
-            v = filter_by_char(v, i, *x);
+        let mut v: Vec<&str> = input.trim().split('\n').collect();
+        for i in 0..12 {
+            if v.len() > 1 {
+                let filter = most_common_bit(&v, &i);
+                v = filter_by_char(v, i, filter);
+            } else {
+                break
+            }
         }
-        println!("{:?}", v);
-        // for i in 0..v.len() {
-        //     let mut count = 0;
-        //     for s in &v {
-        //         count += s.chars().nth(i).to_digit(10);
-        //     }
-        // }
+        println!("O2 result = {:?} or {:?}", v[0], usize::from_str_radix(v[0], 2));
+        let mut result = usize::from_str_radix(v[0], 2).unwrap();
+        let mut v: Vec<&str> = input.trim().split('\n').collect();
+        for i in 0..12 {
+            if v.len() > 1 {
+                let filter = least_common_bit(&v, &i);
+                v = filter_by_char(v, i, filter);
+            } else {
+                break
+            }
+        }
+        println!("CO2 result = {:?} or {:?}", v[0], usize::from_str_radix(v[0], 2));
+        result *= usize::from_str_radix(v[0], 2).unwrap();
+        println!("Result is {:}", result);
     }
 }
 
-// fn filter_by_char<'a>(input: Vec<&'a str>, pos: usize, filter: char) -> Vec<&'a str> {
 fn filter_by_char(input: Vec<&str>, pos: usize, filter: char) -> Vec<&str> {
-    // input.into_iter().filter(|x| x.chars().nth(pos).unwrap() == filter).collect()
     input.iter().cloned().filter(|x| x.chars().nth(pos).unwrap() == filter).collect()
 }
 
-// fn filter_on_most_common_bit (input: Vec<&str>) -> &str {
-//
-// }
+fn most_common_bit(input: &Vec<&str>, i: &usize) -> char {
+    let mut count = 0;
+    if input.len() == 2 {
+        '1'
+    } else {
+        for s in input {
+            count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
+        }
+        if count as f32 >= ((input.len() / 2) as f32).floor() {
+            '1'
+        } else {
+            '0'
+        }
+    }
+}
+
+fn least_common_bit(input: &Vec<&str>, i: &usize) -> char {
+    let mut count = 0;
+    if input.len() == 2 {
+        '0'
+    } else {
+        for s in input {
+            count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
+        }
+        if count as f32 >= ((input.len() / 2) as f32).floor() {
+            '0'
+        } else {
+            '1'
+        }
+    }
+}
