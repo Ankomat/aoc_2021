@@ -58,28 +58,29 @@ fn day3_part1() {
 	}
 }
 fn day3_part2() {
-    match read_file("03.txt") {
-		Ok(input) => {
-            let v: Vec<&str> = input.trim().split('\n').collect();
-            let filtered_v: Vec<&str> = filter_by_char(v, '0');
-            println!("{:?}", filtered_v);
-
-            // let output: Vec<_> = v
-            //     .iter()
-            //     .filter(|x| x.chars().nth(0).unwrap() == '0')
-            //     .collect();
-            // println!("{:?}", output);
-            // println!("{}", type_of(output));
-            // println!("{}", type_of(input));
+    if let Ok(input) = read_file("03.txt") {
+        let filter = ['0', '1', '0']; //[0, 12];
+        let mut v = input.trim().split('\n').collect();
+        for (i, x) in filter.iter().enumerate() {
+            println!("Filtering for {} on position {}:", x, i);
+            v = filter_by_char(v, i, *x);
         }
-        Err(e) => println!("{}", e),
-	}
+        println!("{:?}", v);
+        // for i in 0..v.len() {
+        //     let mut count = 0;
+        //     for s in &v {
+        //         count += s.chars().nth(i).to_digit(10);
+        //     }
+        // }
+    }
 }
 
-fn filter_by_char(input: Vec<&str>, filter: char) -> Vec<&str> {
-    let output: Vec<&str> = input
-        .iter()
-        .filter(|x| x.chars().nth(0).unwrap() == filter)
-        .collect();
-    output
+// fn filter_by_char<'a>(input: Vec<&'a str>, pos: usize, filter: char) -> Vec<&'a str> {
+fn filter_by_char(input: Vec<&str>, pos: usize, filter: char) -> Vec<&str> {
+    // input.into_iter().filter(|x| x.chars().nth(pos).unwrap() == filter).collect()
+    input.iter().cloned().filter(|x| x.chars().nth(pos).unwrap() == filter).collect()
 }
+
+// fn filter_on_most_common_bit (input: Vec<&str>) -> &str {
+//
+// }
