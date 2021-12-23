@@ -2,6 +2,7 @@
 use std::fs::File;
 use std::path::Path;
 use std::io::{self, Read, BufRead};
+use std::collections::HashMap;
 use std::any::type_name;
 // use std::math::round;
 // --------------------------------------------
@@ -19,7 +20,6 @@ fn day4_part1() {
     for _ in 0..100 {
         let mut row_as_numbers: Vec<&str> = Vec::new();
         iter.next();
-        // let mut row: Vec<&str> = iter.next().unwrap().split(' ').collect();
         row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
         board_numbers.extend_from_slice(&row_as_numbers);
         row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
@@ -31,14 +31,25 @@ fn day4_part1() {
         row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
         board_numbers.extend_from_slice(&row_as_numbers);
     }
-    println!("{:?}", board_numbers);
+    // now make hashmap of board_numbers
+    let mut board_lookup = HashMap::new();
+    //: HashMap<&str, Vec<(u8,u8,u8)>
+
+    // let mut bingo_count: Hash =
+    // for x in bingo_numbers {
+    for (i, x) in board_numbers.iter().enumerate() {
+        let pos = (i / 25, (i - 25 * (i / 25)) / 5, (i - 25 * (i / 25)) % 5);
+        let stat = board_lookup.entry(x).or_insert(vec!(pos));  // FIX THIS
+        stat.push(pos);  // FIX THIS
+    }
+    println!("{:?}", board_lookup);
 
     // let board_numbers = binnenlezen als 1 lange lijn van getallen
     // dus lege lijnen laten vallen en nieuwe lijn achter de vorige te zetten
     // maar splitten per ','
 
     // board_numbers 1 voor 1 binnenlezen, locatie op bord is te vinden door
-    // for (i, x) in board_number.enumerate() {
+    // for (i, x) in board_numbers.enumerate() {
     // board = i mod 25
     // row = (i - 25 * board) mod 5
     // column = (i - 25 * board) remainder na mod 5
@@ -46,7 +57,7 @@ fn day4_part1() {
 
     // let bingo_count = hierin de score per bord en per lijn en kolom bijhouden (tot 5)
     // [bord 1[[lijn 1,lijn 2,0,0,0],[kolom 1,kolom 2,0,0,0]],[[0,0,0,0,0],[0,0,0,0,0]]]
-    // per bingo_nummer bereken de locatie met modulo
+    // per bingo_numbers bereken de locatie met modulo
     // bekijk wat de huidige score is, indien 4 --> dit bord wint
     // else bingo_count + 1
 
