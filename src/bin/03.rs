@@ -61,21 +61,25 @@ fn day3_part1() {
 fn day3_part2() {
     if let Ok(input) = read_file("03.txt") {
         let mut v: Vec<&str> = input.trim().split('\n').collect();
-        for i in 0..12 {
+        for i in 0..v[0].len() {
             if v.len() > 1 {
                 let filter = most_common_bit(&v, &i);
                 v = filter_by_char(v, i, filter);
+                // println!("O2 result = {:?}", v);
             } else {
                 break
             }
         }
         println!("O2 result = {:?} or {:?}", v[0], usize::from_str_radix(v[0], 2));
+
         let mut result = usize::from_str_radix(v[0], 2).unwrap();
+
         let mut v: Vec<&str> = input.trim().split('\n').collect();
-        for i in 0..12 {
+        for i in 0..v[0].len() {
             if v.len() > 1 {
                 let filter = least_common_bit(&v, &i);
                 v = filter_by_char(v, i, filter);
+                // println!("CO2 result = {:?}", v);
             } else {
                 break
             }
@@ -98,7 +102,8 @@ fn most_common_bit(input: &Vec<&str>, i: &usize) -> char {
         for s in input {
             count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
         }
-        if count as f32 >= ((input.len() / 2) as f32).floor() {
+        // println!("Count = {} versus half length {}", count, input.len() as f32 / 2.0);
+        if count as f32 >= (input.len() as f32 / 2.0) {
             '1'
         } else {
             '0'
@@ -114,7 +119,8 @@ fn least_common_bit(input: &Vec<&str>, i: &usize) -> char {
         for s in input {
             count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
         }
-        if count as f32 >= ((input.len() / 2) as f32).floor() {
+        // println!("Count = {} versus half length {}", count, input.len() as f32 / 2.0);
+        if count as f32 >= (input.len() as f32 / 2.0) {
             '0'
         } else {
             '1'
