@@ -12,15 +12,18 @@ fn main() {
 }
 // --------------------------------------------
 fn day4_part1() {
+    // read from file into Vector of strings
 	let input = read_file("04.txt");
 	let v: Vec<&str> = input.trim().split('\n').collect();
     let mut iter = v.iter();
+
+    // reshuffle input into useful form
     let mut bingo_numbers: Vec<&str> = iter.next().unwrap().split(',').collect();
-    let mut board_numbers: Vec<&str> = Vec::new();
-    for _ in 0..100 {
+    let mut board_numbers: Vec<&str> = Vec::new(); // will be 1 vec with all board numbers in a row
+    for _ in 0..100 { // there are 100 boards
         let mut row_as_numbers: Vec<&str> = Vec::new();
-        iter.next();
-        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
+        iter.next(); // empty line
+        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect(); // first row
         board_numbers.extend_from_slice(&row_as_numbers);
         row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
         board_numbers.extend_from_slice(&row_as_numbers);
@@ -31,29 +34,40 @@ fn day4_part1() {
         row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
         board_numbers.extend_from_slice(&row_as_numbers);
     }
-    // now make hashmap of board_numbers
+
+    // make hashmap of board_numbers
     let mut board_lookup = HashMap::new();
-    //: HashMap<&str, Vec<(u8,u8,u8)>
-
-    // let mut bingo_count: Hash =
-    // for x in bingo_numbers {
-    for (i, x) in board_numbers.iter().enumerate() {
-        let pos = (i / 25, (i - 25 * (i / 25)) / 5, (i - 25 * (i / 25)) % 5);
-        let stat = board_lookup.entry(x).or_insert(vec!(pos));  // FIX THIS
-        stat.push(pos);  // FIX THIS
+    for (i, &x) in board_numbers.iter().enumerate() {
+        let board = i / 25;
+        let pos = (board, (i - 25 * board) / 5, (i - 25 * board) % 5);
+        let stat = board_lookup.entry(x).or_insert(Vec::new());
+        stat.push(pos);
     }
-    println!("{:?}", board_lookup);
 
-    // let board_numbers = binnenlezen als 1 lange lijn van getallen
-    // dus lege lijnen laten vallen en nieuwe lijn achter de vorige te zetten
-    // maar splitten per ','
+    // now run through bingo_numbers, lookup positions in hashmap
+    // and add 1 to bingo_count for each position until count = 5 per row or per col
+    // then this board has won
+    let mut bingo_count = vec![vec![vec![0;5];2];100]; // 100 boards of 5 rows & columns
+    let mut numbers_called = vec![vec![vec![0;5];5];100];
+    // println!("{:?}", bingo_count[1][1][1]);
+    'outer: for x in bingo_numbers {
+        let positions = board_lookup.get(x).unwrap();
+        for pos in positions {
+            let (board, row, col) = *pos;
+            bingo_count[board][0][row] += 1;
+            bingo_count[board][1][col] += 1;
+            numbers_called[board][row][col] = 1;
+            if bingo_count[board][0][row] >= 5 || bingo_count[board][1][col] >= 5 {
+                println!("Board {} has won with {} on position {:?}!", board, x, (row, col));
+                println!("{:?}", bingo_count[board]);
+                println!("{:?}", numbers_called[board]);
 
-    // board_numbers 1 voor 1 binnenlezen, locatie op bord is te vinden door
-    // for (i, x) in board_numbers.enumerate() {
-    // board = i mod 25
-    // row = (i - 25 * board) mod 5
-    // column = (i - 25 * board) remainder na mod 5
-    // }
+                break 'outer;
+            }
+        }
+    }
+    // println!("{} can be found at {:?}", x, positions);
+}
 
     // let bingo_count = hierin de score per bord en per lijn en kolom bijhouden (tot 5)
     // [bord 1[[lijn 1,lijn 2,0,0,0],[kolom 1,kolom 2,0,0,0]],[[0,0,0,0,0],[0,0,0,0,0]]]
@@ -80,7 +94,6 @@ fn day4_part1() {
     // println!("{:?}", storage);
     // let epsilon = 2_i64.pow(12_u32) - 1 - gamma;
     // println!("gamma is {:?}, epsilon is {:?} and power is {:?}", gamma, epsilon, gamma * epsilon);
-}
 
 // fn day3_part2() {
 //     if let Ok(input) = read_file("03.txt") {
