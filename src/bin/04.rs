@@ -18,20 +18,20 @@ fn day4_part1() {
     let mut iter = v.iter();
 
     // reshuffle input into useful form
-    let mut bingo_numbers: Vec<&str> = iter.next().unwrap().split(',').collect();
-    let mut board_numbers: Vec<&str> = Vec::new(); // will be 1 vec with all board numbers in a row
+    let mut bingo_numbers: Vec<_> = iter.next().unwrap().split(',').map(|x| x.parse::<u32>().unwrap()).collect();
+    let mut board_numbers = Vec::new(); // will be 1 vec with all board numbers in a row
     for _ in 0..100 { // there are 100 boards
-        let mut row_as_numbers: Vec<&str> = Vec::new();
+        let mut row_as_numbers = Vec::new();
         iter.next(); // empty line
-        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect(); // first row
+        row_as_numbers = iter.next().unwrap().split_whitespace().map(|x| x.parse::<u32>().unwrap()).collect();
         board_numbers.extend_from_slice(&row_as_numbers);
-        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
+        row_as_numbers = iter.next().unwrap().split_whitespace().map(|x| x.parse::<u32>().unwrap()).collect();
         board_numbers.extend_from_slice(&row_as_numbers);
-        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
+        row_as_numbers = iter.next().unwrap().split_whitespace().map(|x| x.parse::<u32>().unwrap()).collect();
         board_numbers.extend_from_slice(&row_as_numbers);
-        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
+        row_as_numbers = iter.next().unwrap().split_whitespace().map(|x| x.parse::<u32>().unwrap()).collect();
         board_numbers.extend_from_slice(&row_as_numbers);
-        row_as_numbers = iter.next().unwrap().split(' ').filter(|x| *x != "").collect();
+        row_as_numbers = iter.next().unwrap().split_whitespace().map(|x| x.parse::<u32>().unwrap()).collect();
         board_numbers.extend_from_slice(&row_as_numbers);
     }
 
@@ -46,56 +46,30 @@ fn day4_part1() {
 
     // now run through bingo_numbers, lookup positions in hashmap
     // and add 1 to bingo_count for each position until count = 5 per row or per col
-    // then this board has won
     let mut bingo_count = vec![vec![vec![0;5];2];100]; // 100 boards of 5 rows & columns
-    let mut numbers_called = vec![vec![vec![0;5];5];100];
-    // println!("{:?}", bingo_count[1][1][1]);
+    let mut numbers_not_called = vec![1;2500];
     'outer: for x in bingo_numbers {
-        let positions = board_lookup.get(x).unwrap();
+        let positions = board_lookup.get(&x).unwrap();
         for pos in positions {
             let (board, row, col) = *pos;
             bingo_count[board][0][row] += 1;
             bingo_count[board][1][col] += 1;
-            numbers_called[board][row][col] = 1;
+            numbers_not_called[25*board+5*row+col] = 0;
             if bingo_count[board][0][row] >= 5 || bingo_count[board][1][col] >= 5 {
                 println!("Board {} has won with {} on position {:?}!", board, x, (row, col));
                 println!("{:?}", bingo_count[board]);
-                println!("{:?}", numbers_called[board]);
-
+                println!("{:?}", &numbers_not_called[25*board..25*(board+1)]);
+                let this_board = &board_numbers[25*board..25*(board+1)];
+                println!("{:?}", this_board);
+                let sum: u32 = numbers_not_called[25*board..25*(board+1)].iter().zip(this_board).map(|(x, y)| x * y).sum();
+                println!("{:?} * {} is {}", sum, x, sum * x);
                 break 'outer;
             }
         }
     }
-    // println!("{} can be found at {:?}", x, positions);
 }
 
-    // let bingo_count = hierin de score per bord en per lijn en kolom bijhouden (tot 5)
-    // [bord 1[[lijn 1,lijn 2,0,0,0],[kolom 1,kolom 2,0,0,0]],[[0,0,0,0,0],[0,0,0,0,0]]]
-    // per bingo_numbers bereken de locatie met modulo
-    // bekijk wat de huidige score is, indien 4 --> dit bord wint
-    // else bingo_count + 1
-
-
-	// let mut gamma: i64 = 0;
-    // let mut storage: Vec<i64> = vec![0; 12];
-    //
-	// for i in &v {
-	// 	let mut iter = i.chars();
-    //     for j in 0..12 {
-    //         storage[j] += iter.next().unwrap().to_digit(10).unwrap() as i64;
-    //     }
-    // }
-    //
-    // for (i, x) in storage.iter().rev().enumerate() {
-    //     if *x > 500 {
-    //         gamma += 2_i64.pow(i as u32);
-    //     }
-    // }
-    // println!("{:?}", storage);
-    // let epsilon = 2_i64.pow(12_u32) - 1 - gamma;
-    // println!("gamma is {:?}, epsilon is {:?} and power is {:?}", gamma, epsilon, gamma * epsilon);
-
-// fn day3_part2() {
+// fn day4_part2() {
 //     if let Ok(input) = read_file("03.txt") {
 //         let mut v: Vec<&str> = input.trim().split('\n').collect();
 //         for i in 0..v[0].len() {
@@ -127,43 +101,43 @@ fn day4_part1() {
 //     }
 // }
 
-fn filter_by_char(input: Vec<&str>, pos: usize, filter: char) -> Vec<&str> {
-    input.iter().cloned().filter(|x| x.chars().nth(pos).unwrap() == filter).collect()
-}
-
-fn most_common_bit(input: &Vec<&str>, i: &usize) -> char {
-    let mut count = 0;
-    if input.len() == 2 {
-        '1'
-    } else {
-        for s in input {
-            count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
-        }
-        // println!("Count = {} versus half length {}", count, input.len() as f32 / 2.0);
-        if count as f32 >= (input.len() as f32 / 2.0) {
-            '1'
-        } else {
-            '0'
-        }
-    }
-}
-
-fn least_common_bit(input: &Vec<&str>, i: &usize) -> char {
-    let mut count = 0;
-    if input.len() == 2 {
-        '0'
-    } else {
-        for s in input {
-            count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
-        }
-        // println!("Count = {} versus half length {}", count, input.len() as f32 / 2.0);
-        if count as f32 >= (input.len() as f32 / 2.0) {
-            '0'
-        } else {
-            '1'
-        }
-    }
-}
+// fn filter_by_char(input: Vec<&str>, pos: usize, filter: char) -> Vec<&str> {
+//     input.iter().cloned().filter(|x| x.chars().nth(pos).unwrap() == filter).collect()
+// }
+//
+// fn most_common_bit(input: &Vec<&str>, i: &usize) -> char {
+//     let mut count = 0;
+//     if input.len() == 2 {
+//         '1'
+//     } else {
+//         for s in input {
+//             count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
+//         }
+//         // println!("Count = {} versus half length {}", count, input.len() as f32 / 2.0);
+//         if count as f32 >= (input.len() as f32 / 2.0) {
+//             '1'
+//         } else {
+//             '0'
+//         }
+//     }
+// }
+//
+// fn least_common_bit(input: &Vec<&str>, i: &usize) -> char {
+//     let mut count = 0;
+//     if input.len() == 2 {
+//         '0'
+//     } else {
+//         for s in input {
+//             count += s.chars().nth(*i).unwrap().to_digit(10).unwrap();
+//         }
+//         // println!("Count = {} versus half length {}", count, input.len() as f32 / 2.0);
+//         if count as f32 >= (input.len() as f32 / 2.0) {
+//             '0'
+//         } else {
+//             '1'
+//         }
+//     }
+// }
 
 // fn read_file<P>(filename: P) -> io::Result<String> where P: AsRef<Path>, {
 //     let mut buffer = String::new();
@@ -183,11 +157,11 @@ fn read_file<P>(filename: P) -> String where P: AsRef<Path>, {
     buffer
 }
 
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
+// fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+// where P: AsRef<Path>, {
+//     let file = File::open(filename)?;
+//     Ok(io::BufReader::new(file).lines())
+// }
 
 fn type_of<T>(_: T) -> &'static str {
     type_name::<T>()
