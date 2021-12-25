@@ -59,7 +59,7 @@ fn day5_part2() {
 	let input = read_file("05.txt");
 	let v: Vec<&str> = input.trim().split('\n').collect();
     let mut iter = v.iter();
-    let mut points_visited = HashMap::new();
+    let mut points_visited: HashMap<(u32, u32), u32> = HashMap::new();
     let mut danger_count = 0;
 
     // reshuffle input into useful form
@@ -71,32 +71,37 @@ fn day5_part2() {
                 let mut end: Vec<u32> = points[1].split(',').map(|x| x.parse::<u32>().unwrap()).collect();
                 let mut x_range = Vec::new();
                 let mut y_range = Vec::new();
-                if begin[0] == end[0] {
-                    x_range = vec![begin[0]];
-                } else if begin[0] > end[0]{
-                    let temp = end[0]..begin[0]+1;
+                let delta_x = (begin[0] as i32 - end[0] as i32).abs() as usize;
+                let delta_y = (begin[1] as i32 - end[1] as i32).abs() as usize;
+
+                if begin[0] == end[0] { // vertical
+                    x_range = vec![end[0] ; delta_y + 1];
+                } else if begin[0] < end[0] {   // delta x > 0
+                    let temp = begin[0]..(end[0]+1);
+                    x_range = temp.collect();
+                } else {    // delta x < 0
+                    let temp = end[0]..(begin[0]+1);
                     x_range = temp.rev().collect();
-                } else {
-                    x_range = (begin[0]..(end[0]+1)).collect();
                 }
-                if begin[1] == end[1] {
-                    y_range = vec![begin[1]];
-                } else if begin[1] > end[1]{
+
+                if begin[1] == end[1] { // horizontal
+                    y_range = vec![end[1] ; delta_x + 1];
+                } else if begin[1] < end[1] {  // delta y > 0
+                    let temp = begin[1]..(end[1]+1);
+                    y_range = temp.collect();
+                } else {    // delta y < 0
                     let temp = end[1]..begin[1]+1;
                     y_range = temp.rev().collect();
-                } else {
-                    y_range = (begin[1]..(end[1]+1)).collect();
                 }
-                for x in &x_range {
-                    for y in &y_range {
-                        let count = points_visited.entry((x,y)).or_insert(0);
-                        *count += 1;
-                        if *count == 2 {
-                            danger_count += 1;
-                        }
+
+                let mut line_points = x_range.into_iter().zip(y_range).collect::<Vec<_>>();
+                for (x,y) in &line_points {
+                    let count = points_visited.entry((*x,*y)).or_insert(0);
+                    *count += 1;
+                    if *count == 2 {
+                        danger_count += 1;
                     }
-                }
-                // println!("line from {:?} to {:?}", begin, end);
+               }
             }
             None => break
         }
