@@ -69,24 +69,30 @@ fn day5_part2() {
                 let points: Vec<&str> = line.split(" -> ").collect();
                 let mut begin: Vec<u32> = points[0].split(',').map(|x| x.parse::<u32>().unwrap()).collect();
                 let mut end: Vec<u32> = points[1].split(',').map(|x| x.parse::<u32>().unwrap()).collect();
-                if begin[0] == end[0] || begin[1] == end[1] {
-                    if begin[0] > end[0] {
-                        let temp = begin[0];
-                        begin[0] = end[0];
-                        end[0] = temp;
-                    }
-                    if begin[1] > end[1] {
-                        let temp = begin[1];
-                        begin[1] = end[1];
-                        end[1] = temp;
-                    }
-                    for x in begin[0]..(end[0]+1) {
-                        for y in begin[1]..(end[1]+1) {
-                            let count = points_visited.entry((x,y)).or_insert(0);
-                            *count += 1;
-                            if *count == 2 {
-                                danger_count += 1;
-                            }
+                let mut x_range = Vec::new();
+                let mut y_range = Vec::new();
+                if begin[0] == end[0] {
+                    x_range = vec![begin[0]];
+                } else if begin[0] > end[0]{
+                    let temp = end[0]..begin[0]+1;
+                    x_range = temp.rev().collect();
+                } else {
+                    x_range = (begin[0]..(end[0]+1)).collect();
+                }
+                if begin[1] == end[1] {
+                    y_range = vec![begin[1]];
+                } else if begin[1] > end[1]{
+                    let temp = end[1]..begin[1]+1;
+                    y_range = temp.rev().collect();
+                } else {
+                    y_range = (begin[1]..(end[1]+1)).collect();
+                }
+                for x in &x_range {
+                    for y in &y_range {
+                        let count = points_visited.entry((x,y)).or_insert(0);
+                        *count += 1;
+                        if *count == 2 {
+                            danger_count += 1;
                         }
                     }
                 }
