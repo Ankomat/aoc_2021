@@ -33,7 +33,7 @@ fn main() {
 }
 // --------------------------------------------
 fn day3_part1() {
-	match read_file("03.txt") {
+	match read_file("input/03.txt") {
 		Ok(input) => {
 			let v: Vec<&str> = input.trim().split('\n').collect();
 			let mut gamma: i64 = 0;
@@ -59,7 +59,7 @@ fn day3_part1() {
 	}
 }
 fn day3_part2() {
-    if let Ok(input) = read_file("03.txt") {
+    if let Ok(input) = read_file("input/03.txt") {
         let mut v: Vec<&str> = input.trim().split('\n').collect();
         for i in 0..v[0].len() {
             if v.len() > 1 {

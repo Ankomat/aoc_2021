@@ -32,7 +32,7 @@ fn main() {
 }
 // --------------------------------------------
 fn day1_part1() {
-    if let Ok(lines) = read_lines("01.txt") {
+    if let Ok(lines) = read_lines("input/01.txt") {
         // let mut previous_depth: i32 = -1;
         let mut previous_depth: Option<u32> = None;
         let mut changes: u32 = 0;
@@ -58,7 +58,7 @@ fn day1_part1() {
     }
 }
 fn day1_part2() {
-	match read_file("01.txt") {
+	match read_file("input/01.txt") {
 		Ok(input) => {
 			let v: Vec<u32> = input.trim().split('\n').map(|l| l.parse::<u32>().unwrap()).collect();
 			let mut increases = 0;

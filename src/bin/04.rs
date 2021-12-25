@@ -12,7 +12,7 @@ fn main() {
 // --------------------------------------------
 fn day4_part1() {
     // read from file into Vector of strings
-	let input = read_file("04.txt");
+	let input = read_file("input/04.txt");
 	let v: Vec<&str> = input.trim().split('\n').collect();
     let mut iter = v.iter();
 
@@ -70,7 +70,7 @@ fn day4_part1() {
 
 fn day4_part2() {
     // read from file into Vector of strings
-	let input = read_file("04.txt");
+	let input = read_file("input/04.txt");
 	let v: Vec<&str> = input.trim().split('\n').collect();
     let mut iter = v.iter();
 

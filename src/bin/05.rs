@@ -12,7 +12,7 @@ fn main() {
 // --------------------------------------------
 fn day5_part1() {
     // read from file into Vector of strings
-	let input = read_file("05.txt");
+	let input = read_file("input/05.txt");
 	let v: Vec<&str> = input.trim().split('\n').collect();
     let mut iter = v.iter();
     let mut points_visited = HashMap::new();
@@ -56,7 +56,7 @@ fn day5_part1() {
 
 fn day5_part2() {
     // read from file into Vector of strings
-	let input = read_file("05.txt");
+	let input = read_file("input/05.txt");
 	let v: Vec<&str> = input.trim().split('\n').collect();
     let mut iter = v.iter();
     let mut points_visited: HashMap<(u32, u32), u32> = HashMap::new();

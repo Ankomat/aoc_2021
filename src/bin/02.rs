@@ -32,7 +32,7 @@ fn main() {
 }
 // --------------------------------------------
 fn day2_part1() {
-	match read_file("02.txt") {
+	match read_file("input/02.txt") {
 		Ok(input) => {
 			let v: Vec<&str> = input.trim().split('\n').collect();
 			let mut x: u32 = 0;
@@ -53,7 +53,7 @@ fn day2_part1() {
 	}
 }
 fn day2_part2() {
-	match read_file("02.txt") {
+	match read_file("input/02.txt") {
 		Ok(input) => {
 			let v: Vec<&str> = input.trim().split('\n').collect();
 			let mut x: i64 = 0;
