@@ -19,7 +19,7 @@ fn day8_part1() {
     let mut iter = v.iter();
 
     // get only the parts after | in a vector
-    let output = iter.map(|x| x.split_at(" | ").1).collect();
+    let output = iter.map(|x| x.split(" | ")).map(|x| ).collect();
     println!("{:?}", output);
 }
 
