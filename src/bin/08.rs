@@ -7,7 +7,6 @@ use std::any::type_name;
 use std::time::Instant;
 // --------------------------------------------
 fn main() {
-    // day7_part1();
     day8_part1();
     // day8_part2();
 }
@@ -16,11 +15,16 @@ fn day8_part1() {
     // read from file into Vector of strings
 	let input = read_file("input/08.txt");
 	let v: Vec<_> = input.trim().split('\n').collect();
-    let mut iter = v.iter();
-
-    // get only the parts after | in a vector
-    let output = iter.map(|x| x.split(" | ")).map(|x| ).collect();
-    println!("{:?}", output);
+    let output_long: Vec<&str> = v.into_iter()
+        .map(|x| *x.split(" | ").collect::<Vec<&str>>().get(1).unwrap())
+        .collect();
+    let mut count = 0;
+    for o in output_long {
+        let output_short: Vec<&str> = o.trim().split(' ').collect();
+        let sub_count = output_short.iter().filter(|x| [2,3,4,7].contains(&x.len())).count();
+        count += sub_count;
+    }
+    println!("There are {} outputs of length 2, 3, 4 or 7", count);
 }
 
 // fn day7_part2v1() {
