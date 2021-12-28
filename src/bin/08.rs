@@ -39,83 +39,62 @@ fn day8_part2() {
         outputs.push(temp.next().unwrap());
     }
     for (i, line) in inputs.iter().enumerate() {
-        let mut wirings: HashMap<_,_> = "abcdefg".chars().zip([0b111_1111;7]).collect();
+        let mut wirings: HashMap<_,_> = "pabcdefg".chars().zip([0b1111_1111u8;8]).collect();
         let mut five_buffer = String::new();
         let mut six_buffer = String::new();
-        // let mut temp = 0b111_1111;
         for word in line.split(' ') {
-            // match word.len() {
-            //     2 => temp = 0b011_0000,
-            //     3 => temp = 0b111_0000,
-            //     4 => temp = 0b011_0011,
-            //     5 => five_buffer.push_str(word),
-            //     6 => six_buffer.push_str(word),
-            //     _ => (),
-            // }
-            // for ch in word.chars() {
-            //     wirings = wirings.into_iter().map(|(x,y)| {if x == ch {(x,y&temp)} else {(x,y)}}).collect();
-            // }
+            let mut filter = 0b1111_1111u8;
             match word.len() {
-                2 => for ch in word.chars() {
-                    let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b011_0000;
-                    // for wire in wirings.iter() {
-                    //     print!("{} = {:#09b};", wire.0, wire.1);
-                    // }
-                    // print!("\n");
+                2 => {
+                    filter = 0b0011_0000u8;
+                    wirings = wirings.into_iter().map(|(x,y)| if word.contains(x) {(x , y & filter)} else {(x , y & !filter)}).collect();
                 },
-                3 => for ch in word.chars() {
-                    let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b111_0000;
+                3 => {
+                    filter = 0b0111_0000u8;
+                    wirings = wirings.into_iter().map(|(x,y)| if word.contains(x) {(x , y & filter)} else {(x , y & !filter)}).collect();
                 },
-                4 => for ch in word.chars() {
-                    let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b011_0011;
+                4 => {
+                    filter = 0b0011_0011u8;
+                    wirings = wirings.into_iter().map(|(x,y)| if word.contains(x) {(x , y & filter)} else {(x , y & !filter)}).collect();
                 },
-                5 => {
-                    five_buffer.push_str(word);
-                    // println!("5 letter word, 5-buffer is {}", five_buffer);
-                },
-                6 => {
-                    six_buffer.push_str(word);
-                },
+                5 => five_buffer.push_str(word),
+                6 => six_buffer.push_str(word),
                 _ => (),
             }
         }
-        // println!("finished short words in line {}", i);
-        let mut five_map = count_chars(&five_buffer);
+        let mut five_map = char_freq(&five_buffer);
         for (ch, num) in five_map.iter() {
             match num {
                 1 => {
                     let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b000_0110;
+                    *temp &= 0b0000_0110u8;
                 },
                 2 => {
                     let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b011_0000;
+                    *temp &= 0b0011_0000u8;
                 },
                 3 => {
                     let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b100_1001;
+                    *temp &= 0b0100_1001u8;
                 },
                 _ => (),
             }
         }
-        let mut six_map = count_chars(&six_buffer);
+        let mut six_map = char_freq(&six_buffer);
         for (ch, num) in six_map.iter() {
             match num {
                 2 => {
                     let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b010_0101;
+                    *temp &= 0b0010_0101u8;
                 },
                 3 => {
                     let temp = wirings.get_mut(&ch).unwrap();
-                    *temp &= 0b101_1010;
+                    *temp &= 0b0101_1010u8;
                 },
                 _ => (),
             }
         }
-        println!("after line {}:", i);
+        println!("final result {}:", i);
         for wire in wirings.iter() {
             print!("{} = {:#09b};", wire.0, wire.1);
         }
@@ -133,7 +112,7 @@ fn type_of<T>(_: T) -> &'static str {
     type_name::<T>()
 }
 
-fn count_chars(word: &str) -> HashMap<char,usize> {
+fn char_freq(word: &str) -> HashMap<char,usize> {
     let mut char_count = HashMap::new();
     for ch in word.chars() {
         let count = char_count.entry(ch).or_insert(0);

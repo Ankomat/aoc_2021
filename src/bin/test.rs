@@ -1,11 +1,9 @@
-use std::collections::{HashMap, HashSet};
-
 fn main() {
-    let mut a = HashMap::new();
-    a.insert(1,1);
-    a.insert(2,2);
-    a.insert(3,3);
+    let a = 0b1111_1111u8;
+    let b = 0b1111_1111u8;
+    let f = 0b0011_0000u8;
 
-    a = a.into_iter().map(|(x,y)| (x,2*y)).collect();
-    println!("{:?}", a)
+    println!("a & f {:b}", a & f);
+    println!("b & !f {:b}", b & !f);
+
 }
