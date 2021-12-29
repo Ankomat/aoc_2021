@@ -1,18 +1,11 @@
 use std::collections::{HashMap, HashSet};
 
 fn main() {
-    let a = "abcefcagbcefa";
-    println!("{}", a);
-    println!("{:?}", char_freq(a));
-}
-
-fn char_freq(word: &str) -> HashMap<usize,HashSet<char>> {
-    // hashmap form will be [1: (a,b), 2: (f,e,c), ...]
-    let mut char_freq = HashMap::new();
+    let word = "abc";
+    let wirings = HashMap::from([('a', 0b1000_0000u8),('b',0b0001_0000u8),('c',0b0000_0100u8)]);
+    let mut temp = 0b0000_0000u8;
     for ch in word.chars() {
-        let freq = word.matches(ch).count();
-        let set = char_freq.entry(freq).or_insert(HashSet::new());
-        set.insert(ch);
+        temp |= wirings.get(&ch).unwrap();
     }
-    char_freq
+    println!("{:#010b}", temp);
 }
