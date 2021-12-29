@@ -1,9 +1,18 @@
+use std::collections::{HashMap, HashSet};
+
 fn main() {
-    let a = 0b1111_1111u8;
-    let b = 0b1111_1111u8;
-    let f = 0b0011_0000u8;
+    let a = "abcefcagbcefa";
+    println!("{}", a);
+    println!("{:?}", char_freq(a));
+}
 
-    println!("a & f {:b}", a & f);
-    println!("b & !f {:b}", b & !f);
-
+fn char_freq(word: &str) -> HashMap<usize,HashSet<char>> {
+    // hashmap form will be [1: (a,b), 2: (f,e,c), ...]
+    let mut char_freq = HashMap::new();
+    for ch in word.chars() {
+        let freq = word.matches(ch).count();
+        let set = char_freq.entry(freq).or_insert(HashSet::new());
+        set.insert(ch);
+    }
+    char_freq
 }
