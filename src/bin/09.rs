@@ -13,18 +13,35 @@ fn main() {
 // --------------------------------------------
 fn day9_part1() {
     // read from file into Vector of strings
-	let input = read_file("input/08.txt");
+	let input = read_file("input/09.txt");
 	let v: Vec<_> = input.trim().split('\n').collect();
-    let output_long: Vec<&str> = v.into_iter()
-        .map(|x| *x.split(" | ").collect::<Vec<&str>>().get(1).unwrap())
-        .collect();
     let mut count = 0;
-    for o in output_long {
-        let output_short: Vec<&str> = o.trim().split(' ').collect();
-        let sub_count = output_short.iter().filter(|x| [2,3,4,7].contains(&x.len())).count();
-        count += sub_count;
+    for (i,line) in v.iter().enumerate() {
+        for (j,ch) in line.chars().enumerate() {
+            let val = ch.to_digit(10).unwrap();
+            let mut neighbours = Vec::new();
+            if i > 0 {
+                let top = v.get(i-1).unwrap().chars().nth(j).unwrap();
+                neighbours.push(top.to_digit(10).unwrap());
+            }
+            if i < (v.len() - 1) {
+                let bottom = v.get(i+1).unwrap().chars().nth(j).unwrap();
+                neighbours.push(bottom.to_digit(10).unwrap());
+            }
+            if j > 0 {
+                let left = line.chars().nth(j-1).unwrap();
+                neighbours.push(left.to_digit(10).unwrap());
+            }
+            if j < (line.len() - 1) {
+                let right = line.chars().nth(j+1).unwrap();
+                neighbours.push(right.to_digit(10).unwrap());
+            }
+            if val < *neighbours.iter().min().unwrap() {
+                count += 1 + val;
+            }
+        }
     }
-    println!("There are {} outputs of length 2, 3, 4 or 7", count);
+    println!("{}", count);
 }
 
 // fn day9_part2() {
