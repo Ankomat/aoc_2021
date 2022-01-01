@@ -46,7 +46,7 @@ fn day9_part1() {
 
 // fn day9_part2() {
 //     // read from file into Vector of strings
-// 	let input = read_file("input/08.txt");
+// 	let input = read_file("input/09.txt");
 //     let v: Vec<_> = input.trim().split('\n').collect();
 //     let mut count: u32 = 0;
 //     // go through each line
