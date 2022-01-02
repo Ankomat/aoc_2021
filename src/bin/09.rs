@@ -65,8 +65,8 @@ fn day9_part2(v: &Vec<&str>, low_points: &HashSet<(usize,usize)>) {
     println!("");
     let mut temp = basins.values().cloned().collect::<Vec<usize>>();
     temp.sort();
-    println!("{:?}", 92*94*98);
-    // .sort_unstable().reverse());
+    temp.reverse();
+    println!("{:?}", temp.get(0).unwrap()*temp.get(1).unwrap()*temp.get(2).unwrap());
 }
 
 fn count_size(i: usize, j: usize, checked: &mut HashSet<(usize,usize)>, v: &Vec<&str>) -> usize {
