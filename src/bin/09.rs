@@ -7,14 +7,16 @@ use std::any::type_name;
 use std::time::Instant;
 // --------------------------------------------
 fn main() {
-    day9_part1();
-    day9_part2();
+    let input = read_file("input/09.txt");
+    let v: Vec<_> = input.trim().split('\n').collect();
+    let mut low_points = HashSet::new();
+    day9_part1(&v, &mut low_points);
+    day9_part2(&v, &mut low_points);
 }
 // --------------------------------------------
-fn day9_part1() {
-    // read from file into Vector of strings
-	let input = read_file("input/09.txt");
-	let v: Vec<_> = input.trim().split('\n').collect();
+// read from file into Vector of strings
+
+fn day9_part1(v: &Vec<&str>, low_points: &mut HashSet<(usize,usize)>) {
     let mut count = 0;
     for (i,line) in v.iter().enumerate() {
         for (j,ch) in line.chars().enumerate() {
@@ -38,18 +40,59 @@ fn day9_part1() {
             }
             if val < *neighbours.iter().min().unwrap() {
                 count += 1 + val;
+                low_points.insert((i,j));
             }
         }
     }
     println!("{}", count);
+    println!("");
+    println!("There are {} low points = basins", low_points.len());
+    println!("");
+    println!("{:?}", low_points);
+    println!("");
 }
 
-fn day9_part2() {
-    // startpunten zijn de low points, vaan daaruit uitwaaieren
-    // en 2 hashsets van coordinaten bijhouden: unchecked en checked
-    // zodra een unchecked coordinaat aan de beurt is, verzetten naar unchecked
-    // is een coordinaat < 9 dan uitwaaieren boven, rechts, onder, links (recursief)
+fn day9_part2(v: &Vec<&str>, low_points: &HashSet<(usize,usize)>) {
+    let mut basins = HashMap::new();
+    for (i,j) in low_points {
+        let mut basin_size = 0;
+        let mut checked = HashSet::new();
+        basin_size += count_size(*i, *j, &mut checked, &v);
+        // println!("Low point ({},{}) has basin size {}", i, j, basin_size);
+        basins.insert((i,j), basin_size);
+    }
+    println!("{:?}", &basins);
+    println!("");
+    let mut temp = basins.values().cloned().collect::<Vec<usize>>();
+    temp.sort();
+    println!("{:?}", 92*94*98);
+    // .sort_unstable().reverse());
+}
 
+fn count_size(i: usize, j: usize, checked: &mut HashSet<(usize,usize)>, v: &Vec<&str>) -> usize {
+    let mut height = v.get(i).unwrap().chars().nth(j).unwrap().to_digit(10).unwrap();;
+    let mut count = 0;
+    if !checked.contains(&(i,j)) && height < 9 {
+        checked.insert((i,j));
+        count += 1;
+        if i > 0 {
+            count += count_size(i-1, j, checked, &v);
+        }
+        if i < 99 {
+            count += count_size(i+1, j, checked, &v);
+        }
+        if j > 0 {
+            count += count_size(i, j-1, checked, &v);
+        }
+        if j < 99 {
+            count += count_size(i, j+1, checked, &v);
+        }
+    }
+    count
+}
+
+fn get_el(m: &Vec<&str>, row: usize, col: usize) -> Option<char> {
+    m.get(row)?.chars().nth(col)
 }
 
 fn read_file<P>(filename: P) -> String where P: AsRef<Path>, {
@@ -61,13 +104,3 @@ fn read_file<P>(filename: P) -> String where P: AsRef<Path>, {
 fn type_of<T>(_: T) -> &'static str {
     type_name::<T>()
 }
-
-// fn char_freq(word: &str) -> HashMap<usize,HashSet<char>> {
-//     let mut char_freq = HashMap::new();
-//     for ch in word.chars() {
-//         let freq = word.matches(ch).count();
-//         let set = char_freq.entry(freq).or_insert(HashSet::new());
-//         set.insert(ch);
-//     }
-//     char_freq
-// }
