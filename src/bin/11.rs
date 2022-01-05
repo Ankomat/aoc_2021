@@ -5,6 +5,7 @@ use std::io::{self, Read, BufRead};
 use std::collections::{HashMap, HashSet};
 use std::any::type_name;
 use std::time::Instant;
+use core::cmp::{max, min};
 // --------------------------------------------
 fn main() {
     // read from file into Vector of strings
@@ -31,24 +32,39 @@ fn day11_part1(v: &Vec<&str>) {
 
 // find elements > 9
     for (i, s) in squids.iter_mut().enumerate() {
-        if s > 9 {
-            increase_neigbours(squids, i) {
-                
-            }
+        if *s > 9 {
+            increase_neigbours(squids, i);
         }
-    }
-// for each flasher find all neighbours (max 8) and increase by 1
-    for (i, j) in flashers {
-        let mut neighbours: HashMap<(usize,usize)> = HashMap::new();
-        if let Some(neighbour) = squids.get_mut(1) {
-            *elem = 42;
-        }
-        if i in 1..9 && j in 1..9 {
-            squids.get
-        }
-        for (i,j) in neighbours
     }
 }
+
+fn increase_neigbours(squids: Vec<u32>, i: usize) {
+    let row = i.div_euclid(9); // vanaf 10 is het rij 2
+    let col = i.rem_euclid(9);
+    let mut neighbours = HashSet::new();
+    neighbours.insert((max(0, row-1), col)); // top
+    neighbours.insert((min(9, row+1), col)); // bottom
+    neighbours.insert((row, max(0, col-1))); // left
+    neighbours.insert((row, min(9, col-1))); // right
+    neighbours.insert((max(0, row-1), max(0, col-1))); // top left
+    neighbours.insert((min(9, row+1), max(0, col-1))); // bottom left
+    neighbours.insert((max(0, row-1), min(9, col-1))); // top right
+    neighbours.insert((min(9, row+1), min(9, col-1))); // bottom right
+}
+
+// // for each flasher find all neighbours (max 8) and increase by 1
+//     for (i, j) in flashers {
+//         let mut neighbours: HashMap<usize,usize> = HashMap::new();
+//         if let Some(neighbour) == squids.get_mut(1) {
+//             *elem = 42;
+//         }
+//         if (1..9.contains(i) && 1..9.contains(j)) {
+//             squids.get();
+//         }
+//         for (i,j) in neighbours
+//     }
+// }
+
 
 // fn day11_part2(v: &mut Vec<&str>) {
 //     let mut scores: Vec<u64> = Vec::new();
